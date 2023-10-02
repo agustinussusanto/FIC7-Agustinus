@@ -13,16 +13,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('description');
-            $table->double('price');
-            $table->string('image_url');
-            $table->foreignIdFor(Category::class);
-            $table->foreignIdFor(User::class);
-            $table->timestamps();
-        });
+      // Mengecek apakah tabel sudah ada
+if (!Schema::hasTable('products')) {
+    // Membuat tabel 'products' jika belum ada
+    Schema::create('products', function (Blueprint $table) {
+        $table->bigIncrements('id');
+        $table->string('name');
+        $table->text('description');
+        $table->double('price');
+        $table->string('image_url');
+        $table->unsignedBigInteger('category_id');
+        $table->unsignedBigInteger('user_id');
+        $table->timestamps();
+
+        // Menambahkan foreign key constraints
+        $table->foreign('category_id')->references('id')->on('categories');
+        $table->foreign('user_id')->references('id')->on('users');
+    });
+}
     }
 
     /**
